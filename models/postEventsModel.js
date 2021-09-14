@@ -10,6 +10,6 @@ const postEventsModel = new Schema({
             "sponsor": {type: String, required: true},
 })
 
-const PostEventsModel = mongoose.model('PostEventModel', postEventsModel);
+const PostEventsModel = mongoose.model('PostEventModel', postEventsModel, 'events');
 
 module.exports = PostEventsModel;
