@@ -11,6 +11,6 @@ const getEventsModel = new Schema({
             "sponsor": String,
 })
 
-const GetEventsModel = mongoose.model('GetEventsModel', getEventsModel);
+const GetEventsModel = mongoose.model('GetEventsModel', getEventsModel, 'events');
 
 module.exports = GetEventsModel;
