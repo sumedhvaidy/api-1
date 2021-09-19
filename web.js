@@ -46,4 +46,28 @@ app.delete('/events/:id', async (req, res) => {
     }
 })
 
+app.patch('/events/:id', async (req, res) => {
+    try {
+        const event = await GetEventsModel.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        if(!event) {
+            return res.status(404).send()
+        }
+        res.status(200).send(event);
+    } catch(error) {
+        res.status(500).send(error);
+    }
+})
+
+app.get('/events/:id', async (req, res) => {
+    try {
+        const event = await GetEventsModel.findById(req.params.id);
+        if(!event) {
+            return res.status(404).send()
+        }
+        res.status(200).send(event);
+    } catch(error) {
+        res.status(500).send(error);
+    }
+})
+
 app.listen(process.env.PORT, () => console.log(`server has started at port ${process.env.PORT}`));
