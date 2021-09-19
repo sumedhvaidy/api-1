@@ -28,7 +28,7 @@ app.post('/events', async (req, res) => {
     try {
         const event = new PostEventsModel(req.body);
         await event.save();
-        res.status(200).send(event);
+        res.status(200).send({event: event});
     } catch(error) {
         res.status(400).send(error);
     }
@@ -40,7 +40,7 @@ app.delete('/events/:id', async (req, res) => {
         if(!event) {
             return res.status(404).send();
         }
-        res.status(200).send(event);
+        res.status(200).send({event: event});
     } catch(error) {
         res.status(500).send(error);
     }
@@ -52,7 +52,7 @@ app.patch('/events/:id', async (req, res) => {
         if(!event) {
             return res.status(404).send()
         }
-        res.status(200).send(event);
+        res.status(200).send({event: event});
     } catch(error) {
         res.status(500).send(error);
     }
@@ -64,7 +64,7 @@ app.get('/events/:id', async (req, res) => {
         if(!event) {
             return res.status(404).send()
         }
-        res.status(200).send(event);
+        res.status(200).send({event: event});
     } catch(error) {
         res.status(500).send(error);
     }
