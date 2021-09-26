@@ -6,8 +6,6 @@ const mongoose = require("mongoose");
 const GetEventsModel = require('./models/getEventsModel');
 const bodyParser = require('body-parser');
 const PostEventsModel = require("./models/postEventsModel");
-var startTimeObject = new Date();
-var endTimeObject = new Date();
 
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true }); 
 const db = mongoose.connection;
