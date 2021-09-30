@@ -28,8 +28,8 @@ app.post('/events', async (req, res) => {
     
     try {
         const event = new PostEventsModel(req.body);
-        const startTime = req.body.json()['startTime'].match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
-        const endTime = req.body.json()['endTime'].match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
+        const startTime = req.body.startTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
+        const endTime = req.body.endTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
         if(isValidDate(startTime) && isValidDate(endTime) && timesAreValid(startTime, endTime)) {
             await event.save();
             res.status(200).send({event: event});
