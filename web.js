@@ -30,7 +30,7 @@ app.post('/events', async (req, res) => {
         const event = new PostEventsModel(req.body);
         const startTime = req.body.startTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
         const endTime = req.body.endTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
-        if(isValidDate(startTime) && isValidDate(endTime) && timesAreValid(startTime, endTime)) {
+        if(timesAreValid(startTime, endTime)) {
             await event.save();
             res.status(200).send({event: event});
         } else {
@@ -55,9 +55,9 @@ app.delete('/events/:id', async (req, res) => {
 
 app.patch('/events/:id', async (req, res) => {
     try {
-        const startTime = req.body.json()['startTime'].match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})\Z$/);
-        const endTime = req.body.json()['endTime'].match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})\Z$/);
-        if(isValidDate(startTime) && isValidDate(endTime) && timesAreValid(startTime, endTime)) {
+        const startTime = req.body.startTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
+        const endTime = req.body.endTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
+        if(timesAreValid(startTime, endTime)) {
             const event = await GetEventsModel.findByIdAndUpdate(req.params.id, req.body, {new: true});
             if(!event) {
                 return res.status(404).send()
@@ -83,45 +83,10 @@ app.get('/events/:id', async (req, res) => {
     }
 })
 
-function isValidDate(matches) {
-    // Reference: https://stackoverflow.com/questions/20972728/validate-datetime-with-javascript-and-regex
-    if (matches === null) {
-        return false;
-    } else{
-        // now lets check the date sanity
-        var date = toDateObject(matches);
-        if (date.getFullYear() !== year
-            || date.getMonth() != month
-            || date.getDate() !== day
-            || date.getHours() !== hour
-            || date.getMinutes() !== minute
-            || date.getSeconds() !== second
-        ) {
-            return false;
-        } 
-    }
-    return true;
-}
-
 function timesAreValid(startTime, endTime) {
     if(startTime === null || endTime === null) {
         return false;
     }
-    return toDateObject(startTime) <= toDateObject(endTime);
+    return startTime <= endTime;
 }
-
-function toDateObject(time) {
-    try {
-        const year = parseInt(time[3], 10);
-        const month = parseInt(time[2], 10) - 1; // months are 0-11
-        const day = parseInt(time[1], 10);
-        const hour = parseInt(time[4], 10);
-        const minute = parseInt(time[5], 10);
-        const second = parseInt(time[6], 10);
-        return new Date(year, month, day, hour, minute, second);
-    } catch(error) {
-        return null;
-    }
-}
-
 app.listen(process.env.PORT, () => console.log(`server has started at port ${process.env.PORT}`));
