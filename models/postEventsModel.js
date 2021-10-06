@@ -8,6 +8,7 @@ const postEventsModel = new Schema({
             "endTime": {type: String, required: true},
             "location": {type: String, required: true},
             "sponsor": {type: String, required: true},
+            "checkInCode": {type: String, required: true}
 })
 
 const PostEventsModel = mongoose.model('PostEventModel', postEventsModel, 'events');
