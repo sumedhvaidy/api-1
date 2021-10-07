@@ -9,6 +9,7 @@ const getEventsModel = new Schema({
             "endTime": String,
             "location": String,
             "sponsor": String,
+            "checkInCode": String,
 })
 
 const GetEventsModel = mongoose.model('GetEventsModel', getEventsModel, 'events');
