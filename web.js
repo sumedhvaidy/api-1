@@ -87,21 +87,21 @@ app.get('/events/:id', async (req, res) => {
 app.post('/events/checkins', async (req, res) => {
 
     try {
-        const event = await GetEventsArrayModel.findById(req.params.eventId);
+        const event = await GetEventsArrayModel.findById(req.body.eventId);
         if(!event) {
             return res.status(404).send()
         }
         const tempArray = event.checkIns
-        if(!tempArray.includes(req.params.uid.toString())) {
-            tempArray.push(req.params.uid.toString());
+        if(!tempArray.includes(req.body.uid.toString())) {
+            tempArray.push(req.body.uid.toString());
         }
 
-        const event = await GetEventsArrayModel.findByIdAndUpdate({id: req.params.eventId.toString()}, {checkIns: tempArray},
+        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.body.eventId.toString()}, {checkIns: tempArray},
         function(err, result) {
             if(err) {
                 res.status(400).send(err);
             } else {
-                res.send(result);
+                res.status(200).send(result);
             }
         });
          res.status(200).send();
@@ -116,7 +116,7 @@ app.get('/events/checkins/:eventId', async (req, res) => {
         if(!event) {
             return res.status(404).send()
         }
-        res.status(200).send({event: event});
+        res.status(200).send({event: event.tempArray});
     } catch(error) {
         res.status(500).send(error);
     }
@@ -133,7 +133,7 @@ app.delete('/events/checkins/:eventId', async (req, res) => {
             tempArray.splice(tempArray.indexOf(req.params.uid.toString()), 1);
         }
 
-        const event = await GetEventsArrayModel.findByIdAndUpdate({id: req.params.eventId.toString()}, {checkIns: tempArray},
+        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.params.eventId.toString()}, {checkIns: tempArray},
         function(err, result) {
             if(err) {
                 res.status(400).send(err);
