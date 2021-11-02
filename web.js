@@ -86,20 +86,12 @@ app.get('/events/:id', async (req, res) => {
 
 app.post('/events/checkins', async (req, res) => {
 
-    try {
-        const event = await GetEventsArrayModel.findById(req.body.eventId);
+    try {        
+        const event = await GetEventsArrayModel.findByIdAndUpdate(req.body.eventId.toString(), {$push: {checkIns: req.body.uid.toString()}});
         if(!event) {
             return res.status(404).send()
         }
-        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.body.eventId.toString()}, {$push: {checkIns: req.body.uid.toString()}},
-        function(err, result) {
-            if(err) {
-                res.status(400).send(err);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-         res.status(200).send();
+        res.status(200).send(event);
     } catch(error) {
         res.status(500).send(error);
     }
@@ -119,19 +111,11 @@ app.get('/events/checkins/:eventId', async (req, res) => {
 
 app.delete('/events/checkins/:eventId', async (req, res) => {
     try {
-        const event = await GetEventsArrayModel.findById(req.params.eventId);
+        const event = await GetEventsArrayModel.findByIdAndUpdate(req.params.eventId.toString(), {$pull: {checkIns: [req.body.uid.toString()]}});
         if(!event) {
             return res.status(404).send()
         }
-        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.params.eventId.toString()}, {$pull: {checkIns: [req.params.uid.toString()]}},
-        function(err, result) {
-            if(err) {
-                res.status(400).send(err);
-            } else {
-                res.send(result);
-            }
-        });
-         res.status(200).send();
+         res.status(200).send(event);
     } catch(error) {
         res.status(500).send(error);
     }
