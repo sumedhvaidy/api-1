@@ -30,7 +30,7 @@ app.post('/events', async (req, res) => {
     try {
         const startTime = req.body.startTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
         const endTime = req.body.endTime.match(/^(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2}):(\d{2})Z$/);
-        if(timesAreValid(startTime, endTime) && (req.body.checkIns === null || (Array.isArray(req.body.checkIns) && req.body.checkIns.length === 0))) {
+        if(timesAreValid(startTime, endTime) && (req.body.checkIns === undefined || (Array.isArray(req.body.checkIns) && req.body.checkIns.length === 0))) {
             const event = new PostEventsModel(req.body);
             await event.save();
             res.status(200).send({event: event});
@@ -91,12 +91,7 @@ app.post('/events/checkins', async (req, res) => {
         if(!event) {
             return res.status(404).send()
         }
-        const tempArray = event.checkIns
-        if(!tempArray.includes(req.body.uid.toString())) {
-            tempArray.push(req.body.uid.toString());
-        }
-
-        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.body.eventId.toString()}, {checkIns: tempArray},
+        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.body.eventId.toString()}, {$push: {checkIns: req.body.uid.toString()}},
         function(err, result) {
             if(err) {
                 res.status(400).send(err);
@@ -128,12 +123,7 @@ app.delete('/events/checkins/:eventId', async (req, res) => {
         if(!event) {
             return res.status(404).send()
         }
-        const tempArray = event.checkIns
-        if(tempArray.includes(req.params.uid.toString())) {
-            tempArray.splice(tempArray.indexOf(req.params.uid.toString()), 1);
-        }
-
-        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.params.eventId.toString()}, {checkIns: tempArray},
+        event = await GetEventsArrayModel.findByIdAndUpdate({id: req.params.eventId.toString()}, {$pull: {checkIns: [req.params.uid.toString()]}},
         function(err, result) {
             if(err) {
                 res.status(400).send(err);
