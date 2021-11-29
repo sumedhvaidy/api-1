@@ -7,6 +7,7 @@ const GetEventsModel = require('./models/getEventsModel');
 const bodyParser = require('body-parser');
 const PostEventsModel = require("./models/postEventsModel");
 const GetEventsArrayModel = require("./models/getEventsArrayModel");
+const e = require("express");
 
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true }); 
 const db = mongoose.connection;
@@ -85,7 +86,6 @@ app.get('/events/:id', async (req, res) => {
 })
 
 app.post('/events/checkins', async (req, res) => {
-
     try {        
         const event = await GetEventsArrayModel.findByIdAndUpdate(req.body.eventId.toString(), {$push: {checkIns: req.body.uid.toString()}});
         if(!event) {
@@ -103,7 +103,7 @@ app.get('/events/checkins/:eventId', async (req, res) => {
         if(!event) {
             return res.status(404).send()
         }
-        res.status(200).send({event: event.tempArray});
+        res.status(200).send({checkIns: event.checkIns});
     } catch(error) {
         res.status(500).send(error);
     }
@@ -121,6 +121,24 @@ app.delete('/events/checkins/:eventId', async (req, res) => {
     }
 })
 
+app.get('/events/checkins/user/:uid', async (req, res) => {
+    try {
+        const events = await GetEventsArrayModel.find({"checkIns": req.params.uid}, "id");
+
+        if(!events) {
+            return res.status(404).send();
+        }
+
+        const eventIds = [];
+        for (var i = 0; i < events.length; i++) {
+            eventIds.push(events[i]['_id']);
+        }
+
+        res.status(200).send({"events": eventIds});
+    } catch(error) {
+        res.status(500).send(error);
+    }
+})
 
 function timesAreValid(startTime, endTime) {
     if(startTime === null || endTime === null) {
