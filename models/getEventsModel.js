@@ -10,7 +10,7 @@ const getEventsModel = new Schema({
             "location": String,
             "sponsor": String,
             "checkInCode": String,
-})
+}, { versionKey: false })
 
 const GetEventsModel = mongoose.model('GetEventsModel', getEventsModel, 'events');
 

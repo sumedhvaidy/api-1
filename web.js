@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.get('/events/', async (req, res) => {
     try {
-        const events = await GetEventsModel.find({});
+        const events = await GetEventsModel.find({}).select('-checkIns');
         res.status(200).send({events: events});
     } catch(error) {
         res.status(500).send(error);
